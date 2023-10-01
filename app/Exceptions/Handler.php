@@ -2,7 +2,13 @@
 
 namespace App\Exceptions;
 
+use App\Helpers\ResponseHelper;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\UnauthorizedException;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -21,10 +27,29 @@ class Handler extends ExceptionHandler
     /**
      * Register the exception handling callbacks for the application.
      */
-    public function register(): void
+    public function register()
     {
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof ModelNotFoundException) {
+            return ResponseHelper::error('Resource not found' , 404);
+        }
+
+         if ($exception instanceof AuthenticationException) {
+            return ResponseHelper::error('Unauthorized' , 401);
+        }
+
+        if ($exception instanceof ValidationException) {
+            return ResponseHelper::error('Validation error' ,422, ['errors' => $exception->errors()]);
+        }
+
+        // Add more custom error handling here as needed
+
+        return parent::render($request, $exception);
     }
 }

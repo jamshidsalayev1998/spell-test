@@ -1,0 +1,31 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('spell_test_results', function (Blueprint $table) {
+            $table->id();
+            $table->integer('user_id');
+            $table->integer('count_words');
+            $table->integer('corrects_count');
+            $table->integer('incorrects_count');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('spell_test_results');
+    }
+};
